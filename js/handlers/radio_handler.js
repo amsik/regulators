@@ -1,0 +1,3 @@
+function RadioHandler() {};
+
+RadioHandler.prototype = {}

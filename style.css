@@ -1,0 +1,26 @@
+.btns {
+	cursor: pointer;
+}
+
+.mikrik {
+	background-image: url('images/mikrik.jpg');
+	background-repeat:  no-repeat;
+	height: 46px;
+	width: 46px;	
+	background-position: 0 0;
+}
+.mikrik:hover {
+	background-position: -46px 0;	
+}
+
+
+.range {
+	background-image: url('images/range.jpg');
+	background-repeat:  no-repeat;
+	height: 50px;
+	width: 46px;	
+	background-position: 0 0;
+}
+.range:hover {
+	background-position: -46px 0;	
+}

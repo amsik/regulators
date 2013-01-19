@@ -1,0 +1,3 @@
+function RangeHandler() {};
+
+RangeHandler.prototype = {}

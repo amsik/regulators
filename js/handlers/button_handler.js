@@ -1,0 +1,3 @@
+function ButtonHandler() {};
+
+ButtonHandler.prototype = {}
