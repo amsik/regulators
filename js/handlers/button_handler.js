@@ -1,3 +1,8 @@
 function ButtonHandler() {};
 
-ButtonHandler.prototype = {}
+ButtonHandler.prototype = {	
+	listen: function() {
+
+
+	}
+};

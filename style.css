@@ -1,3 +1,7 @@
+body {
+	background: #0C1124;
+}
+
 .btns {
 	cursor: pointer;
 }
@@ -17,10 +21,15 @@
 .range {
 	background-image: url('images/range.jpg');
 	background-repeat:  no-repeat;
-	height: 50px;
-	width: 46px;	
-	background-position: 0 0;
+	height: 48px;
+	width: 44px;	
+	background-position: 0 -432px;
 }
-.range:hover {
-	background-position: -46px 0;	
+
+.range-hover {
+	background-position: -42px -432px;	
+}
+
+.range-active {
+	background-position: -84px -432px;	
 }

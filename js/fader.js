@@ -11,39 +11,40 @@
 
 	$(document).on('ready', function(){
 		$.btns = {
-			'fader' :  new Fader({
+			'range' :  new Fader({
 				'element' 	: 'range',
-				'max' 		: 30,
-				'min' 		: -10,
-				'default' 	: 55
+				'max' 		: 5,
+				'min' 		: -4,
+				'default' 	: 0,
+				'calc'		: {
+					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
+					'img' 		: { 'h' : 480, 'w' : 168 }
+				}
 			}),
-
+			/*
 			'button' : new Fader({
 				'element' 	: 'button',
 				'max' 		: 15,
 				'min' 		: -10,
 				'default' 	: 55				
 			})
+			*/
 		}
 	});
 
 
 	function Fader(options) {	
 		
-		this.maxValue = options.max;
-		this.minValue = options.min;
-		this.element  = $('#' + options.element);
+		this.maxValue 	= options.max;					// установка макс. значения
+		this.minValue 	= options.min;					// установка минимального значения
+		this.element  	= $('#' + options.element);		// текущий элемент
+		this.calc 		= options.calc;					// настройки спрайтов
 
-		this.typeElement = this.element.data('type'); 
+		this.typeElement = this.element.data('type'); 	// тип кнопки
 
-		this.setDefault(options.default);
+		this.setDefault(options.default);				// значение по умолчанию
 
-		var handler = this.getHandler();
-
-		handler.fafa();
-
-		console.log(handler);
-		//handler.fafa();
+		return this.getHandler();
 	}
 
 
@@ -69,15 +70,7 @@
 				return;
 			}
 
-			var obj = new handler;
-
-			return this.extend(obj,{
-				'element' 	: this.element,
-				'max' 		: this.getMax(),
-				'min' 		: this.getMin(),
-				'default' 	: this.defaultValue,
-				'area'		: area || 'web'
-			});
+			return new handler(this.element, this);
 		},
 
 		/**
@@ -126,7 +119,7 @@
 
 			this.defaultValue = 
 				( val < this.minValue || val > this.maxValue || isNaN(val) )	
-				? Math.ceil((this.getMin() + this.getMax()) / 2)
+				? ( val > this.getMax() ? this.getMax() : this.getMin() )
 				: val;
 		},
 
