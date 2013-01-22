@@ -15,6 +15,7 @@ function RangeHandler(el, params) {
 	this.shifts 		= [this.calc.sprite.h, this.calc.sprite.w];		// Смещение спрайта
 	this.totalVals		= this.getTotalVals();							// Считаем общее число спрайтов
 
+	this.step 			= 5;											// шаг для счетчика
 
 	this.activePosition = {												// Стартовая позиция спрайта
 		'x' : 0,
@@ -28,7 +29,6 @@ function RangeHandler(el, params) {
 	this.listen();
 
 	document.ondragstart = function() {
-		$(this).css('cursor', 'pointer');
 		return false;
 	};
 
@@ -44,7 +44,7 @@ RangeHandler.prototype = {
 
 		for( 
 			var i =  this.getMin(); 
-				i <  this.getDefault(); 
+				i <  this.getValue(); 
 				i += 1, startPosition += 1 
 		);
 
@@ -55,7 +55,22 @@ RangeHandler.prototype = {
 	listen: function() {
 		
 		var 
-			that = this;
+			that 	= this,
+			timer	= null;
+
+		this.element.mousewheel(function(e, delta){
+			that.setPosition(2);
+			that.setVal(delta);
+
+			if ( typeof timer != 'number' ) {
+				timer = setTimeout(function(){
+					that.setPosition(1);
+					timer = null;
+				}, 500);
+			}
+			
+		});
+
 
 		this.element.hover(function(){
 			
@@ -80,7 +95,6 @@ RangeHandler.prototype = {
 			that.started = 1;
 		});
 
-
 		$(document).on('mouseup', function() {
 			
 			that.setPosition(0);
@@ -91,9 +105,6 @@ RangeHandler.prototype = {
 
 	},
 
-	setVal: function() {
-
-	},
 
 	/**
 	* установка положения спрайта (позиции)
@@ -117,6 +128,7 @@ RangeHandler.prototype = {
 		this.setSlide(this.activePosition);
 	},
 
+
 	// Начало перемещения
 	dragStart: function(startPos) {
 		var 
@@ -131,21 +143,25 @@ RangeHandler.prototype = {
 			// тянем вверх
 			if (party) {
 				if (plus > e.pageY && (plus - 5) < e.pageY ) {
-					plus -= 5;
-					that.setPosition(that.getStartPosition() + 1, 'y');
-					that.setDefault(that.getDefault() + 1);
+					plus -= that.step;
+					that.setVal(1);
 				}
 			} else {
 				if (minus < e.pageY) {
-					minus += 5;
-					that.setPosition(that.getStartPosition() - 1, 'y');
-					that.setDefault(that.getDefault() - 1);
+					minus += that.step;
+					that.setVal(-1);
 				}
 			}
 
 		});
 
+	},
 
+
+	// Установка значения по умолчанию + замена спрайта
+	setVal: function(sign) {
+		this.setPosition(this.getStartPosition() + sign, 'y');
+		this.setValue(this.getValue() + sign);
 	},
 
 

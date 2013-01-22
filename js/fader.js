@@ -15,12 +15,22 @@
 				'element' 	: 'range',
 				'max' 		: 5,
 				'min' 		: -4,
-				'default' 	: 0,
+				'default' 	: 5,
 				'calc'		: {
 					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
 					'img' 		: { 'h' : 480, 'w' : 168 }
 				}
 			}),
+			'range1' :  new Fader({
+				'element' 	: 'range1',
+				'max' 		: 5,
+				'min' 		: -4,
+				'default' 	: -555,
+				'calc'		: {
+					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
+					'img' 		: { 'h' : 480, 'w' : 168 }
+				}
+			}),			
 			/*
 			'button' : new Fader({
 				'element' 	: 'button',
@@ -38,11 +48,12 @@
 		this.maxValue 	= options.max;					// установка макс. значения
 		this.minValue 	= options.min;					// установка минимального значения
 		this.element  	= $('#' + options.element);		// текущий элемент
-		this.calc 		= options.calc;					// настройки спрайтов
+		this.calc		= options.calc;					// настройки спрайтов
 
 		this.typeElement = this.element.data('type'); 	// тип кнопки
 
-		this.setDefault(options.default);				// значение по умолчанию
+		this.setDefault(options['default']);			// значение по умолчанию
+		this.setValue( this.getDefault() );	
 
 		return this.getHandler();
 	}
@@ -63,7 +74,7 @@
 
 		getHandler: function(that) {
 			var 
-				obj		= null,
+				obj 	= null,
 				handler = this.types[this.typeElement];
 
 			if ( 'function' !== typeof handler ) {
@@ -72,6 +83,7 @@
 
 			return new handler(this.element, this);
 		},
+
 
 		/**
 		* Установка максимального значения
@@ -88,6 +100,7 @@
 			return this.maxValue;
 		},
 
+
 		/**
 		* Установка минимального значения
 		*/
@@ -102,6 +115,23 @@
 		getMin: function() {
 			return this.minValue;
 		},
+
+
+		/**
+		* Возвращает текущее значение
+		* @return integer
+		*/
+		getValue: function() {
+			return this.currValue;
+		},
+
+		/**
+		* Установка значения
+		*/
+		setValue: function(val) {
+			this.currValue = parseInt(val);
+		},
+
 
 		/**
 		* Значение по умолчанию
@@ -123,6 +153,7 @@
 				: val;
 		},
 
+
 		/**
 		* Объединяем 2 объекта
 		* @return Object
@@ -138,7 +169,6 @@
 
 			return a;
 		}
-
 	}
 
 
