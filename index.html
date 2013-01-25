@@ -26,7 +26,30 @@
 			<div class="mikrik btns" id="button" data-type="button"></div>
 			<div class="range btns" id="range" data-type="range"></div>
 			<div class="range btns" id="range1" data-type="range"></div>
+
+			<button id="block_1" data-t="block">Заблокировать 1</button>
+
 		</div>
+
+
+		<script>
+			$('#block_1').click(function(){
+				var t = $(this).data('t');
+
+				if ( 'block' == t ) {
+					$.btns.range.lockButton();
+					$(this).text('Разблокировать');
+					$(this).data('t', 'unblock');
+				} else {
+					$.btns.range.unlockButton();
+					$(this).text('Заблокировать');	
+					$(this).data('t', 'block');				
+				}
+
+			});
+
+
+		</script>
 
 	</body>
 </html>

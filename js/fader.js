@@ -15,7 +15,7 @@
 				'element' 	: 'range',
 				'max' 		: 5,
 				'min' 		: -4,
-				'default' 	: 5,
+				'default' 	: 1,
 				'calc'		: {
 					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
 					'img' 		: { 'h' : 480, 'w' : 168 }
@@ -53,7 +53,7 @@
 		this.typeElement = this.element.data('type'); 	// тип кнопки
 
 		this.setDefault(options['default']);			// значение по умолчанию
-		this.setValue( this.getDefault() );	
+		this.setValue(this.getDefault());	
 
 		return this.getHandler();
 	}
@@ -147,10 +147,7 @@
 		setDefault: function(val) {
 			val = parseInt(val);
 
-			this.defaultValue = 
-				( val < this.minValue || val > this.maxValue || isNaN(val) )	
-				? ( val > this.getMax() ? this.getMax() : this.getMin() )
-				: val;
+			this.defaultValue = this.checkVal(val);
 		},
 
 
@@ -168,8 +165,22 @@
 			}
 
 			return a;
+		},
+
+		/**
+		* Проверка значения. 
+		* Чтобы не заходило за границы максимального и минимального
+		* @return integer
+		*/
+		checkVal: function(val) {
+
+			val =  
+				( val < this.minValue || val > this.maxValue || isNaN(val) )	
+				? ( val > this.getMax() ? this.getMax() : this.getMin() )
+				: val;
+
+			return val;
 		}
 	}
-
 
 }(window.jQuery);

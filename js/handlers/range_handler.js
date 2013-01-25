@@ -36,7 +36,10 @@ function RangeHandler(el, params) {
 
 RangeHandler.prototype = {
 
-	started: 0,				// начало драга
+	started		 : 0,				// начало драга
+	hovered		 : 0,				// наведен
+	timer		 : null,
+	activeButton : true,
 
 
 	getStartPosition: function() {
@@ -55,50 +58,60 @@ RangeHandler.prototype = {
 	listen: function() {
 		
 		var 
-			that 	= this,
-			timer	= null;
+			that 		= this,
+			startPos 	= 0;
 
-		this.element.mousewheel(function(e, delta){
+		this.element.on('mousewheel.range', function(e, delta){
 			that.setPosition(2);
 			that.setVal(delta);
 
-			if ( typeof timer != 'number' ) {
-				timer = setTimeout(function(){
-					that.setPosition(1);
-					timer = null;
-				}, 500);
-			}
-			
-		});
+			if ( typeof that.timer != 'number' ) {
+				that.timer = setTimeout(function(){
 
+					if (0 == that.hovered) {
+						return;
+					}
+
+					that.setPosition(1);
+					that.timer = null;
+				}, 1000);
+			}
+		});
 
 		this.element.hover(function(){
 			
-			if (!that.started)
+			if (!that.started) {
 				that.setPosition(1);
+			}
+				
+			that.hovered = 1;
 
 		}, function() {
 
-			if (!that.started)
+			if (!that.started) {
 				that.setPosition(0);
+			}
 
+			that.hovered 	= 0;
+			that.timer 		= null;
 		});
 
 
-		this.element.on('mousedown', function(e) {
+		this.element.on('mousedown.range', function(e) {
 			
-			var startPos = e.pageY;
+			startPos = e.pageY;
 
 			that.dragStart(startPos);
 			that.setPosition(2);
-
 			that.started = 1;
 		});
 
-		$(document).on('mouseup', function() {
+		$(document).on('mouseup.range', function(e) {
 			
-			that.setPosition(0);
-
+			if ( that.isActive() ) {
+				that.setPosition(0);
+			}
+			c([startPos, e.pageY]);
 			$(document).off('.drag_range');
 			that.started = 0;
 		});
@@ -142,11 +155,15 @@ RangeHandler.prototype = {
 
 			// тянем вверх
 			if (party) {
+				minus = startPos;
+
 				if (plus > e.pageY && (plus - 5) < e.pageY ) {
 					plus -= that.step;
 					that.setVal(1);
 				}
 			} else {
+				plus = startPos - 10;
+
 				if (minus < e.pageY) {
 					minus += that.step;
 					that.setVal(-1);
@@ -160,8 +177,11 @@ RangeHandler.prototype = {
 
 	// Установка значения по умолчанию + замена спрайта
 	setVal: function(sign) {
+		var 
+			value = this.checkVal( this.getValue() + sign );
+
 		this.setPosition(this.getStartPosition() + sign, 'y');
-		this.setValue(this.getValue() + sign);
+		this.setValue(value);
 	},
 
 
@@ -178,7 +198,39 @@ RangeHandler.prototype = {
 		this.element.css({
 			'backgroundPosition' : p
 		});		
+	},
+
+
+	// Проверка на активность кнопки
+	isActive: function() {
+		return this.activeButton;
+	},
+
+
+	// Заблокировать кнопку
+	lockButton: function() {
+		var 
+			calc = this.calc,
+			pos;
+
+		this.activeButton = false;
+
+		// Ставим позицию на последнюю
+		pos = (calc.img.w / calc.sprite.w) - 1;
+		this.setPosition(pos, 'x');
+		
+		this.element.off('.range').off('.drag_range');
+		this.element.unbind();
+	},
+
+
+	// разблокировать кнопку
+	unlockButton: function() {
+		this.setPosition(0);
+		this.listen();
+		this.activeButton = true;
 	}
+
 }
 
 function c(cc) {
