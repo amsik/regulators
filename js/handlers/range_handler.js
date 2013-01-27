@@ -27,11 +27,6 @@ function RangeHandler(el, params) {
 
 	// ставим события на кнопку
 	this.listen();
-
-	document.ondragstart = function() {
-		return false;
-	};
-
 };
 
 RangeHandler.prototype = {
@@ -62,6 +57,11 @@ RangeHandler.prototype = {
 			startPos 	= 0;
 
 		this.element.on('mousewheel.range', function(e, delta){
+			e.preventDefault();
+
+			// чистим дельту для аира
+			delta = ( delta >= 1 ) ? 1 : -1;
+			
 			that.setPosition(2);
 			that.setVal(delta);
 
@@ -99,46 +99,27 @@ RangeHandler.prototype = {
 
 		this.element.on('mousedown.range', function(e) {
 			
-			startPos = e.pageY;
+			startPos 		= e.pageY;
+			that.started 	= 1;
 
 			that.dragStart(startPos);
 			that.setPosition(2);
-			that.started = 1;
 		});
 
 		$(document).on('mouseup.range', function(e) {
 			
 			if ( that.isActive() ) {
-				that.setPosition(0);
+				if (e.toElement.getAttribute('id') == that.element.attr('id')) {
+					that.setPosition(1);
+				} else {
+					that.setPosition(0);					
+				}
 			}
-			c([startPos, e.pageY]);
+
 			$(document).off('.drag_range');
 			that.started = 0;
 		});
 
-	},
-
-
-	/**
-	* установка положения спрайта (позиции)
-	* Отсчет начинается с 0
-	* @param n 		- номер позиции
-	* @param axis	- ось
-	*/ 
-	setPosition: function(n, axis) {
-		axis = axis || 'x';
-
-		if ( n >= this.getTotalVals() || n < 0 ) {
-			return;
-		}
-
-		if ( 'x' == axis ) {
-			this.activePosition.x = this.shifts[1] * n;	
-		} else {
-			this.activePosition.y = this.shifts[0] * n;
-		}
-
-		this.setSlide(this.activePosition);
 	},
 
 
@@ -188,16 +169,6 @@ RangeHandler.prototype = {
 	// общая сумма спрайтов
 	getTotalVals: function() {
 		return Math.ceil(this.calc.img.h / this.shifts[0]);
-	},
-
-
-	// Установка слайда
-	setSlide: function(pos) {
-		var p = -pos.x + "px -" + pos.y + "px";
-
-		this.element.css({
-			'backgroundPosition' : p
-		});		
 	},
 
 

@@ -17,18 +17,29 @@
 
 		<style>
 			#content div.btns { margin-bottom: 50px; }
+			#range_debug {
+				border: 1px solid yellow;
+				padding: 10px;				
+			}
+			#range_console {
+				margin-top: 20px;
+				color: yellow;
+				border-top: 1px solid white;				
+				padding-top: 10px;
+			}
 		</style>
 
 		<title>Buttons</title>
 	</head>
 	<body>
 		<div id="content">
-			<div class="mikrik btns" id="button" data-type="button"></div>
 			<div class="range btns" id="range" data-type="range"></div>
-			<div class="range btns" id="range1" data-type="range"></div>
-
-			<button id="block_1" data-t="block">Заблокировать 1</button>
-
+			<div id="range_debug">
+				<button id="block_1" data-t="block">Заблокировать</button>
+				<button id="value_1" data-t="block">Значение</button>
+				<button id="clear_1" onclick="$('#range_console').empty();">Очистить</button>
+				<div id="range_console"></div>
+			</div>
 		</div>
 
 
@@ -48,7 +59,27 @@
 
 			});
 
+			$('#range').on('mousewheel.range', function(e, delta){
+				var cnt = e.timeStamp + " " + delta;
+				//_c(cnt, 1);
+			});
 
+			$('#value_1').click(function(){
+				_c( $.btns.range.getValue() );
+			});
+
+			function _c(text, st) {
+
+				var cnl = document.getElementById('range_console');
+
+				st = st || false;
+
+				if (st) {
+					cnl.innerHTML += "<BR>" + text;
+				} else {
+					cnl.innerHTML = text;
+				}
+			}
 		</script>
 
 	</body>

@@ -33,3 +33,14 @@ body {
 .range-active {
 	background-position: -84px -432px;	
 }
+
+.radio {
+	background-image: url('images/radio.jpg');
+	background-repeat:  no-repeat;
+	height: 62px;
+	width: 78px;	
+}
+
+.radio:hover {
+	background-position: -82px 0;	
+}

@@ -20,26 +20,24 @@
 					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
 					'img' 		: { 'h' : 480, 'w' : 168 }
 				}
-			}),
-			'range1' :  new Fader({
-				'element' 	: 'range1',
-				'max' 		: 5,
-				'min' 		: -4,
-				'default' 	: -555,
+			}),		
+			
+			'radio' : new Fader({
+				'element' 	: 'radio',
+				'max' 		: 1,
+				'min' 		: 0,
+				'default' 	: 0,
 				'calc'		: {
-					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
-					'img' 		: { 'h' : 480, 'w' : 168 }
-				}
-			}),			
-			/*
-			'button' : new Fader({
-				'element' 	: 'button',
-				'max' 		: 15,
-				'min' 		: -10,
-				'default' 	: 55				
+					'sprite' 	: { 'h' : 62,  'w' : 78	}, 
+					'img' 		: { 'h' : 130, 'w' : 328 }
+				}				
 			})
-			*/
 		}
+
+		document.ondragstart = function() {
+			return false;
+		};
+		
 	});
 
 
@@ -167,6 +165,7 @@
 			return a;
 		},
 
+
 		/**
 		* Проверка значения. 
 		* Чтобы не заходило за границы максимального и минимального
@@ -180,6 +179,39 @@
 				: val;
 
 			return val;
+		},
+
+
+		// Установка слайда
+		setSlide: function(pos) {
+			var p = -pos.x + "px -" + pos.y + "px";
+
+			this.element.css({
+				'backgroundPosition' : p
+			});		
+		},
+
+
+		/**
+		* установка положения спрайта (позиции)
+		* Отсчет начинается с 0
+		* @param n 		- номер позиции
+		* @param axis	- ось
+		*/ 
+		setPosition: function(n, axis) {
+			axis = axis || 'x';
+
+			if ( n >= this.getTotalVals() || n < 0 ) {
+				return;
+			}
+
+			if ( 'x' == axis ) {
+				this.activePosition.x = this.shifts[1] * n;	
+			} else {
+				this.activePosition.y = this.shifts[0] * n;
+			}
+
+			this.setSlide(this.activePosition);
 		}
 	}
 
