@@ -19,10 +19,11 @@
 			#content div.btns { margin-bottom: 50px; }
 			#range_debug {
 				border: 1px solid yellow;
-				padding: 10px;				
+				padding: 10px;		
+				margin-bottom: 20px;		
 			}
 			#range_console {
-				margin-top: 20px;
+				margin: 20px;
 				color: yellow;
 				border-top: 1px solid white;				
 				padding-top: 10px;
@@ -33,13 +34,22 @@
 	</head>
 	<body>
 		<div id="content">
+
 			<div class="range btns" id="range" data-type="range"></div>
+
 			<div id="range_debug">
 				<button id="block_1" data-t="block">Заблокировать</button>
 				<button id="value_1" data-t="block">Значение</button>
 				<button id="clear_1" onclick="$('#range_console').empty();">Очистить</button>
 				<div id="range_console"></div>
 			</div>
+
+			<!--div class="radio btns" id="radio" data-type="radio"></div>
+
+			<div class="radio btns" id="radio2" data-type="radio"></div-->			
+
+			<div class="checkbox btns" id="checkbox" data-type="checkbox"></div>
+
 		</div>
 
 

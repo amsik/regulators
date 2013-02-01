@@ -12,7 +12,6 @@ function RangeHandler(el, params) {
 
 
 	this.element 		= el;											// Текущая кнопка
-	this.shifts 		= [this.calc.sprite.h, this.calc.sprite.w];		// Смещение спрайта
 	this.totalVals		= this.getTotalVals();							// Считаем общее число спрайтов
 
 	this.step 			= 5;											// шаг для счетчика
@@ -35,19 +34,6 @@ RangeHandler.prototype = {
 	hovered		 : 0,				// наведен
 	timer		 : null,
 	activeButton : true,
-
-
-	getStartPosition: function() {
-		var startPosition = 0;
-
-		for( 
-			var i =  this.getMin(); 
-				i <  this.getValue(); 
-				i += 1, startPosition += 1 
-		);
-
-		return startPosition;
-	},
 
 
 	listen: function() {
@@ -78,22 +64,23 @@ RangeHandler.prototype = {
 			}
 		});
 
-		this.element.hover(function(){
+		var hovered = function(pos, timer) {
 			
 			if (!that.started) {
-				that.setPosition(1);
+				that.setPosition(pos);
 			}
 				
-			that.hovered = 1;
+			that.hovered = pos;
 
-		}, function() {
-
-			if (!that.started) {
-				that.setPosition(0);
+			if (timer) {
+				that.timer = null;
 			}
+		};
 
-			that.hovered 	= 0;
-			that.timer 		= null;
+		this.element.hover(function(){
+			hovered(1, false);
+		}, function() {
+			hovered(0, true);
 		});
 
 
@@ -107,7 +94,7 @@ RangeHandler.prototype = {
 		});
 
 		$(document).on('mouseup.range', function(e) {
-			
+
 			if ( that.isActive() ) {
 				if (e.toElement.getAttribute('id') == that.element.attr('id')) {
 					that.setPosition(1);
@@ -166,12 +153,6 @@ RangeHandler.prototype = {
 	},
 
 
-	// общая сумма спрайтов
-	getTotalVals: function() {
-		return Math.ceil(this.calc.img.h / this.shifts[0]);
-	},
-
-
 	// Проверка на активность кнопки
 	isActive: function() {
 		return this.activeButton;
@@ -202,8 +183,4 @@ RangeHandler.prototype = {
 		this.activeButton = true;
 	}
 
-}
-
-function c(cc) {
-	console.log(cc);
 }

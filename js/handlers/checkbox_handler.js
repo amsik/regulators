@@ -1,3 +1,15 @@
-function CheckBoxHandler() {};
+function CheckBoxHandler(el, params) {
 
-CheckBoxHandler.prototype = {}
+	params.extend(this, params);
+
+
+};
+
+CheckBoxHandler.prototype = {
+
+}
+
+
+function c(cc) {
+	console.log(cc);
+}

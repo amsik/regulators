@@ -20,17 +20,26 @@
 					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
 					'img' 		: { 'h' : 480, 'w' : 168 }
 				}
-			}),		
-			
+			}),
 			'radio' : new Fader({
 				'element' 	: 'radio',
-				'max' 		: 1,
-				'min' 		: 0,
-				'default' 	: 0,
+				'max' 		: 5,
+				'min' 		: 3,
+				'default' 	: 5,
 				'calc'		: {
-					'sprite' 	: { 'h' : 62,  'w' : 78	}, 
-					'img' 		: { 'h' : 130, 'w' : 328 }
+					'sprite' 	: { 'h' : 50,  'w' : 123 }, 
+					'img' 		: { 'h' : 150, 'w' : 615 }
 				}				
+			}),
+			'checkbox' : new Fader({
+				'element' 	: 'checkbox',
+				'max' 		: 5,
+				'min' 		: 3,
+				'default' 	: 5,
+				'calc'		: {
+					'sprite' 	: { 'h' : 50,  'w' : 123 }, 
+					'img' 		: { 'h' : 42, 'w' : 315 }
+				}					
 			})
 		}
 
@@ -48,7 +57,8 @@
 		this.element  	= $('#' + options.element);		// текущий элемент
 		this.calc		= options.calc;					// настройки спрайтов
 
-		this.typeElement = this.element.data('type'); 	// тип кнопки
+		this.shifts 	 = [this.calc.sprite.h, this.calc.sprite.w];		// Смещение спрайта
+		this.typeElement = this.element.data('type'); 						// тип кнопки
 
 		this.setDefault(options['default']);			// значение по умолчанию
 		this.setValue(this.getDefault());	
@@ -199,9 +209,12 @@
 		* @param axis	- ось
 		*/ 
 		setPosition: function(n, axis) {
-			axis = axis || 'x';
+			var tltVals;	
 
-			if ( n >= this.getTotalVals() || n < 0 ) {
+			axis 	= axis || 'x';
+			tltVals = ( 'x' == axis ) ? 'w' : 'h';
+
+			if ( n >= this.getTotalVals(tltVals) || n < 0 ) {
 				return;
 			}
 
@@ -212,7 +225,40 @@
 			}
 
 			this.setSlide(this.activePosition);
-		}
+		},
+
+
+		// получание стартовой позиции
+		getStartPosition: function() {
+			var startPosition = 0;
+
+			for( 
+				var i =  this.getMin(); 
+					i <  this.getValue(); 
+					i += 1, startPosition += 1 
+			);
+
+			return startPosition;
+		},
+
+
+
+		// общая сумма спрайтов
+		getTotalVals: function(type) {
+			type = type || 'h';
+
+			if ( 'h' == type ) {
+				return Math.ceil(this.calc.img.h / this.shifts[0]);	
+			} else {
+				return Math.ceil(this.calc.img.w / this.shifts[1]);	
+			}
+			
+		},
+
 	}
 
 }(window.jQuery);
+
+function c(cc) {
+	console.log(cc);
+}
