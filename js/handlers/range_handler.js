@@ -1,15 +1,10 @@
 function RangeHandler(el, params) {
 
 	var 
-		that 			= this,
-		startPosition 	= 0;
+		that = this;
 
 	// типо наследование от Fader
 	params.extend(this, params);
-
-	// стартовый сдвиг, в зависимости от значения по умолчанию
-	startPosition = this.getStartPosition();
-
 
 	this.element 		= el;											// Текущая кнопка
 	this.totalVals		= this.getTotalVals();							// Считаем общее число спрайтов
@@ -18,7 +13,7 @@ function RangeHandler(el, params) {
 
 	this.activePosition = {												// Стартовая позиция спрайта
 		'x' : 0,
-		'y' : startPosition * this.shifts[0]
+		'y' : this.getStartPosition() * this.shifts[0]
 	}; 
 
 	// поставим кнопку по умолчанию
@@ -40,45 +35,53 @@ RangeHandler.prototype = {
 		
 		var 
 			that 		= this,
-			startPos 	= 0;
+			startPos 	= 0,
+			hovered 	= function(pos, timer) {
+				
+				if (!that.started) {
+					that.setPosition(pos);
+				}
+					
+				that.hovered = pos;
+
+				if (timer) {
+					that.timer = null;
+				}
+			};
+
 
 		this.element.on('mousewheel.range', function(e, delta){
 			e.preventDefault();
 
+			clearTimeout(that.timer);
+
+			var setHover = function(){
+				if (0 == that.hovered) {
+					return;
+				}
+
+				that.setPosition(1);
+			};
+
 			// чистим дельту для аира
 			delta = ( delta >= 1 ) ? 1 : -1;
-			
+
 			that.setPosition(2);
 			that.setVal(delta);
 
-			if ( typeof that.timer != 'number' ) {
-				that.timer = setTimeout(function(){
+			that.timer = setTimeout(setHover, 1000);
 
-					if (0 == that.hovered) {
-						return;
-					}
-
-					that.setPosition(1);
-					that.timer = null;
-				}, 1000);
-			}
 		});
 
-		var hovered = function(pos, timer) {
-			
-			if (!that.started) {
-				that.setPosition(pos);
-			}
-				
-			that.hovered = pos;
-
-			if (timer) {
-				that.timer = null;
-			}
-		};
 
 		this.element.hover(function(){
+
+			if (1 == $.activity.range) {
+				return false;
+			}
+
 			hovered(1, false);
+
 		}, function() {
 			hovered(0, true);
 		});
@@ -86,17 +89,21 @@ RangeHandler.prototype = {
 
 		this.element.on('mousedown.range', function(e) {
 			
-			startPos 		= e.pageY;
-			that.started 	= 1;
+			startPos 		 = e.pageY;
+			that.started 	 = 1;
+			$.activity.range = 1;
 
 			that.dragStart(startPos);
 			that.setPosition(2);
 		});
 
+
 		$(document).on('mouseup.range', function(e) {
 
 			if ( that.isActive() ) {
-				if (e.toElement.getAttribute('id') == that.element.attr('id')) {
+				var id = e.target.id;
+
+				if ( id == that.element.attr('id')) {
 					that.setPosition(1);
 				} else {
 					that.setPosition(0);					
@@ -104,7 +111,9 @@ RangeHandler.prototype = {
 			}
 
 			$(document).off('.drag_range');
-			that.started = 0;
+
+			that.started 		= 0;
+			$.activity.range 	= 0;
 		});
 
 	},

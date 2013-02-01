@@ -18,7 +18,7 @@ function RadioHandler(el, params) {
 
 	// настройки
 	this.settings = {
-		'nextSlide' : 100
+		'nextSlide' : 10
 	};
 
 	this.listen();
@@ -46,8 +46,6 @@ RadioHandler.prototype = {
 
 			that.setPosition(1);
 			$(document).off('.drag_radio');
-
-			c(e)
 		});
 	},
 

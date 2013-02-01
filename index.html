@@ -20,13 +20,17 @@
 			#range_debug {
 				border: 1px solid yellow;
 				padding: 10px;		
-				margin-bottom: 20px;		
+				margin-bottom: 20px;
+				margin-top: 30px;		
 			}
 			#range_console {
 				margin: 20px;
 				color: yellow;
 				border-top: 1px solid white;				
 				padding-top: 10px;
+			}
+			.range {
+				margin: 0 !important;
 			}
 		</style>
 
@@ -36,6 +40,7 @@
 		<div id="content">
 
 			<div class="range btns" id="range" data-type="range"></div>
+			<div class="range btns" id="range2" data-type="range"></div>
 
 			<div id="range_debug">
 				<button id="block_1" data-t="block">Заблокировать</button>
@@ -44,9 +49,7 @@
 				<div id="range_console"></div>
 			</div>
 
-			<!--div class="radio btns" id="radio" data-type="radio"></div>
-
-			<div class="radio btns" id="radio2" data-type="radio"></div-->			
+			<div class="radio btns" id="radio" data-type="radio"></div>		
 
 			<div class="checkbox btns" id="checkbox" data-type="checkbox"></div>
 

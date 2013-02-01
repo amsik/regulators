@@ -9,6 +9,14 @@
 	*/ 
 	var area = 'web';
 
+	/**
+	* Активность кнопок 
+	* Для того, чтобы работала только 1 кнопка 
+	*/ 
+	$.activity = {
+		'range' : 0
+	};
+
 	$(document).on('ready', function(){
 		$.btns = {
 			'range' :  new Fader({
@@ -21,6 +29,17 @@
 					'img' 		: { 'h' : 480, 'w' : 168 }
 				}
 			}),
+			'range2' :  new Fader({
+				'element' 	: 'range2',
+				'max' 		: 5,
+				'min' 		: -4,
+				'default' 	: -2,
+				'calc'		: {
+					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
+					'img' 		: { 'h' : 480, 'w' : 168 }
+				}
+			}),
+
 			'radio' : new Fader({
 				'element' 	: 'radio',
 				'max' 		: 5,
@@ -31,13 +50,14 @@
 					'img' 		: { 'h' : 150, 'w' : 615 }
 				}				
 			}),
+
 			'checkbox' : new Fader({
 				'element' 	: 'checkbox',
 				'max' 		: 5,
 				'min' 		: 3,
 				'default' 	: 5,
 				'calc'		: {
-					'sprite' 	: { 'h' : 50,  'w' : 123 }, 
+					'sprite' 	: { 'h' : 50,  'w' : 45 }, 
 					'img' 		: { 'h' : 42, 'w' : 315 }
 				}					
 			})
