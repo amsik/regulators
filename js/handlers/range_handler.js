@@ -171,8 +171,7 @@ RangeHandler.prototype = {
 	// Заблокировать кнопку
 	lockButton: function() {
 		var 
-			calc = this.calc,
-			pos;
+			calc = this.calc, pos;
 
 		this.activeButton = false;
 
@@ -182,6 +181,10 @@ RangeHandler.prototype = {
 		
 		this.element.off('.range').off('.drag_range');
 		this.element.unbind();
+
+		this.element.on('mousewheel.not_scroll', function(e, delta){
+			e.preventDefault();
+		});		
 	},
 
 
@@ -190,6 +193,8 @@ RangeHandler.prototype = {
 		this.setPosition(0);
 		this.listen();
 		this.activeButton = true;
+
+		this.element.off('.not_scroll');
 	}
 
 }

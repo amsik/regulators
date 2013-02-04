@@ -84,8 +84,6 @@ RadioHandler.prototype = {
 
 				that.setVal(party);	
 			}
-
-
 		});
 	},
 
@@ -105,7 +103,7 @@ RadioHandler.prototype = {
 		this.setPosition(lastPos);
 		this.setPosition(shift, 'y');
 
-		setTimeout(function(){
+		setTimeout(function() {
 
 			that.setValue(value);
 			that.setPosition(2);	

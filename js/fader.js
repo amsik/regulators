@@ -53,9 +53,9 @@
 
 			'checkbox' : new Fader({
 				'element' 	: 'checkbox',
-				'max' 		: 5,
-				'min' 		: 3,
-				'default' 	: 5,
+				'max' 		: 1,
+				'min' 		: 0,
+				'default' 	: 0,
 				'calc'		: {
 					'sprite' 	: { 'h' : 50,  'w' : 45 }, 
 					'img' 		: { 'h' : 42, 'w' : 315 }
@@ -94,10 +94,10 @@
 		* Устанавливаются в аттрибуте "data-type"
 		*/
 		types: {
-			'range' 	: RangeHandler,			// Кнопка типа "Range" (регулятор)
+			'range' 	: RangeHandler,			// Кнопка типа "Range"  (регулятор)
 			'button' 	: ButtonHandler,		// Кнопка типа "Button" (микрик)
-			'checkbox'	: CheckBoxHandler,		// Кнопка типа "Range" (с фиксацией)
-			'radio'		: RadioHandler			// Кнопка типа "Range" (переключатель)
+			'checkbox'	: CheckBoxHandler,		// Кнопка типа "Range"  (с фиксацией)
+			'radio'		: RadioHandler			// Кнопка типа "Range"  (переключатель)
 		},
 
 		getHandler: function(that) {
