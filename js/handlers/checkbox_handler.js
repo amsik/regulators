@@ -36,7 +36,8 @@ CheckBoxHandler.prototype = {
 	setState: function( params ) {
 
 		var key = this.isActive() ? 'active' : 'notActive';
-
+		
+		this.setValue( this.checkVal(this.isActive()) );
 		this.setPosition( params[key] );
 	},
 

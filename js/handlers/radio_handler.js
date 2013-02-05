@@ -26,26 +26,75 @@ function RadioHandler(el, params) {
 
 RadioHandler.prototype = {
 
-	access: true,			// доступ к значению
+	access	: true,			// доступ к значению
+	hovered	: false,
+	timer	: null,
+	dragged	: 0,
+	active 	: true,
 
 	listen: function() {
 
 		var 
 			that		= this,
-			startPos 	= 0;
+			startPos 	= 0,
+			mouseDown 	= 0;
+
+
+		this.element.hover(function() {
+			that.setPosition(1);
+			that.hovered = true;
+		}, function() {
+			that.setPosition(0);
+			that.hovered = false;
+		});
+
 
 		this.element.on('mousedown.radio', function(e) {
-			startPos = e.pageX;
+			startPos = mouseDown = e.pageX;
 
-			that.dragStart(startPos);
+			that.dragStart(startPos, e);
 			that.setPosition(2);
 		});
 
 
 		$(document).on('mouseup.radio', function(e) {
 
-			that.setPosition(1);
+			e.target.getAttribute('id') == that.element.attr('id') 
+				? that.setPosition(1)
+				: that.setPosition(0);
+		
 			$(document).off('.drag_radio');
+
+			if (mouseDown == e.pageX) {
+				that.onClick(e);
+			}
+
+		});
+
+
+		this.element.on('mousewheel.radio', function(e, delta) {
+			e.preventDefault();
+
+			clearTimeout(that.timer);
+
+			var setHover = function(){
+				if (0 == that.hovered) {
+					return;
+				}
+
+				that.setPosition(1);
+			};
+
+			that.timer = setTimeout(setHover, 1000);	
+
+			delta = ( delta >= 1 ) ? 1 : -1;
+
+			if ( that.checkBorder(delta) ) {
+				return;
+			}
+
+			that.setVal(delta);
+
 		});
 	},
 
@@ -56,37 +105,60 @@ RadioHandler.prototype = {
 			sh 		= this.calc.sprite.w / this.getTotalVals('h'),
 			party, accPos;
 
-
 		$(document).on("mousemove.drag_radio", function(e){
+
+			this.dragged = 1;
 
 			party  = ( e.pageX >= startPos ) ? 1 : -1;
 			accPos = (party == 1)
 					? (that.getStartPosition() + 2) * sh
 					: that.getStartPosition() * sh;
 
+			if (that.checkBorder(party)) {
+				return;
+			}
+
 			// листаем вправо
 			if ( party == 1 && ((e.pageX >= accPos) && e.pageX <= (accPos + sh)) )	{ 
-
-				if ( that.getValue() == that.getMax() ) {
-					return;
-				}
-
 				that.setVal(party);	
 			}
 
 
 			// листаем влево
 			if (party == -1 && ((e.pageX <= accPos) && e.pageX >= (accPos - sh)) ) {
-
-				if ( that.getValue() == that.getMin() ) {
-					return;
-				}
-
 				that.setVal(party);	
 			}
+
 		});
 	},
 
+	// при клике
+	onClick: function(e) {
+
+		var 
+			e 		= e || window.event;
+			that	= this,
+			part 	= that.shifts[1] / that.getTotalVals(),
+			val  	= Math.ceil(e.clientX / part) - 1,
+			pos  	= [ Math.min(val, that.getStartPosition()),  Math.max(val, that.getStartPosition()) ],
+			party 	= that.getStartPosition() > val ? -1 : 1;
+
+
+		var timer, i = pos[0];
+
+		timer = setInterval(nextSlide, 20);	
+
+		function nextSlide() {
+			i++;
+			
+			that.setVal(party);
+
+			if ( i >= pos[1] ) {
+				clearInterval(timer);
+			}
+
+		};	
+	},
 
 	// Установка значения по умолчанию + замена спрайта
 	setVal: function(sign) {
@@ -104,11 +176,9 @@ RadioHandler.prototype = {
 		this.setPosition(shift, 'y');
 
 		setTimeout(function() {
-
 			that.setValue(value);
 			that.setPosition(2);	
 			that.setPosition(that.getStartPosition(), 'y');	
-
 		}, this.settings.nextSlide);
 
 		// если последнее значение - остановим
@@ -121,9 +191,39 @@ RadioHandler.prototype = {
 	},
 
 
-}
+	// Проверка границ, чтобы не заходило за макс или мин
+	checkBorder: function(derection) {
 
+		var g = (derection > 0) 
+					? this.getValue() == this.getMax()
+					: this.getValue() == this.getMin();
 
-function c(cc) {
-	console.log(cc);
+		return g;
+	},
+
+	isActive: function() {
+		return this.active;
+	},
+
+	lockButton: function() {
+
+		this.element.unbind();
+		this.element.off('.radio').off('.drag_radio');
+		$(document).off('.radio');
+
+		this.element.on('mousewheel.not_scroll', function(e, delta){
+			e.preventDefault();
+		});			
+
+		this.setPosition(3);
+	},
+
+	unlockButton: function() {
+		this.setPosition(0);
+		this.listen();
+		this.active = true;
+
+		this.element.off('.not_scroll');		
+	}
+
 }
