@@ -66,13 +66,15 @@ CheckBoxHandler.prototype = {
 
 		var 
 			that 	= this,
-			el 		= this.element;
+			el 		= this.element,
+			down 	= false;
 
 
 		el.on('mousedown.checkbox', function() {
 			that.setPosition(2);
 
-			$.activity = 1;
+			down		= true;
+			$.activity  = 1;
 		});
 
 
@@ -82,7 +84,8 @@ CheckBoxHandler.prototype = {
 				that.setState( that.optionsState.mouseUp );
 			} 
 
-			$.activity = 0;
+			$.activity 	= 0;
+			down		= false;
 		});
 
 
@@ -93,10 +96,16 @@ CheckBoxHandler.prototype = {
 
 			that.setState( that.optionsState.hoverStart, true );
 		}, function() {
+			
+			// если опущена кнопка, но увели курсор за пределы
+			if (down) { 
+				that.setState( that.optionsState.hoverEnd, true );
+			}
+
+
 			if (1 == $.activity) {
 				return false;
 			}
-			
 			that.setState( that.optionsState.hoverEnd, true );
 		});
 

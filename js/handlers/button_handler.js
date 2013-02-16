@@ -22,6 +22,10 @@ ButtonHandler.prototype = {
 
 
 		el.hover(function() {
+			if (1 == $.activity) {
+				return false;
+			}
+
 			that.setPosition(1);
 		}, function() {
 			that.setPosition(0);
@@ -30,6 +34,7 @@ ButtonHandler.prototype = {
 
 		el.on('mousedown.button', function(e) {
 			that.setPosition(2);
+			$.activity = 1;
 		});
 
 		el.on('mouseup.button', function(e) {
@@ -40,6 +45,7 @@ ButtonHandler.prototype = {
 			}
 
 			that.setPosition(0);
+			$.activity = 0;
 
 		});
 	},

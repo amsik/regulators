@@ -7,7 +7,7 @@
 	*	Объекты для записи в файл
 	*/ 
 	var 
-		area 		= 'web',
+		area 		= 'air',
 		targetsConf = {},
 		temp 		= null,
 		selectStart = false;		// Отмена выделения документа
@@ -124,7 +124,7 @@
 
 		// через сколько записуем
 		//this.confTime 	= 4000;
-		this.confTime 	= 500;
+		this.confTime 	= 1000;
 
 		this.maxValue 	= options.max;					// установка макс. значения
 		this.minValue 	= options.min;					// установка минимального значения
