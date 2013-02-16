@@ -1,87 +1,156 @@
-!function($) {
-	"use strict"; 
-
 	/**
 	* Область работы скрипта. 
 	* Значения:
 	*	0. web - веб
 	*	1. air - Adobe AIR
+	*
+	*	Объекты для записи в файл
 	*/ 
-	var area = 'web';
+	var 
+		area 		= 'web',
+		targetsConf = {},
+		temp 		= null,
+		selectStart = false;		// Отмена выделения документа
 
 	/**
 	* Активность кнопок 
 	* Для того, чтобы работала только 1 кнопка 
 	*/ 
-	$.activity = {
-		'range' : 0
-	};
+	$.activity = 0;
 
-	$(document).on('ready', function(){
-		$.btns = {
-			'range' :  new Fader({
-				'element' 	: 'range',
-				'max' 		: 5,
-				'min' 		: -4,
-				'default' 	: 1,
-				'calc'		: {
-					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
-					'img' 		: { 'h' : 480, 'w' : 168 }
-				}
-			}),
-			'range2' :  new Fader({
-				'element' 	: 'range2',
-				'max' 		: 5,
-				'min' 		: -4,
-				'default' 	: -2,
-				'calc'		: {
-					'sprite' 	: { 'h' : 48,  'w' : 42	}, 
-					'img' 		: { 'h' : 480, 'w' : 168 }
-				}
-			}),
+	// -------------   Работа с файлами в Adobe AIR  -------------
+	function AIRFile() {	
 
-			'radio' : new Fader({
-				'element' 	: 'radio',
-				'max' 		: 5,
-				'min' 		: 3,
-				'default' 	: 5,
-				'calc'		: {
-					'sprite' 	: { 'h' : 50,  'w' : 123 }, 
-					'img' 		: { 'h' : 150, 'w' : 615 }
-				}				
-			}),
+		// Читаем или записываем из файла
+		this.fileName = air.File.applicationStorageDirectory.resolvePath('params_buttons1.ini');	
 
-			'checkbox' : new Fader({
-				'element' 	: 'checkbox',
-				'max' 		: 1,
-				'min' 		: 0,
-				'default' 	: 0,
-				'calc'		: {
-					'sprite' 	: { 'h' : 50,  'w' : 45 }, 
-					'img' 		: { 'h' : 42, 'w' : 315 }
-				}					
-			})
+		if ( !this.fileName.exists ) {
+			this.writeToFile('');
 		}
 
-		document.ondragstart = function() {
-			return false;
-		};
-		
-	});
+		var config = this.readFromFile();
+
+		config = this.parseConfig(config);
+
+		// создаем объект из имен кнопок
+		for( var i in config ) {
+
+			targetsConf[i] = { 
+				'value' 	: config[i]['value'], 
+				'activity' 	: config[i]['activity'] 
+			};
+
+		}
+
+	}
+
+	AIRFile.prototype = {
+
+		// запись в файл
+		writeToFile: function(content, mode) {
+			mode = mode || 'WRITE';
+
+			var stream 	= new air.FileStream();
+			
+			stream.open( this.fileName, air.FileMode[mode] );
+			stream.writeMultiByte( content, air.File.systemCharset );
+			stream.close();
+		},
+
+		// чтение из файла
+		readFromFile: function() {
+			var content = null;														  
+			var stream 	= new air.FileStream();
+			
+			stream.open( this.fileName, air.FileMode.READ );
+			content = stream.readMultiByte( stream.bytesAvailable, air.File.systemCharset );
+			stream.close();	
+
+			return content;		
+		},
+
+		// разбор конфига на объект
+		parseConfig: function (content) {
+			var elements, values = {};
+
+			elements = content.split(';');
+
+			for( var i = 0; i < elements.length; i++ ) {
+
+				var 
+					elOnce = elements[i].split(":"),
+					params;
+
+				if ("" == elOnce[0]) {
+					continue;
+				}
+
+
+				params = elOnce[1].split(',');
+
+				values[elOnce[0]] = { 
+					'value' 	: params[0], 
+					'activity' 	: params[1] 
+				};
+			}
+
+			return values;
+		},
+
+		// перевод объекта в строку для конфига
+		toStr: function(obj) {
+			var str = '';
+
+			for( var i in obj ) {
+				var activity = obj[i].activity == 0 ? 0 : 1;
+
+				str += i + ":" + obj[i].value + "," + activity + ";";
+			}
+
+			return str;
+		}
+	};
+	
+
+	if ( 'air' == area ) {
+		temp = new AIRFile();
+	}
 
 
 	function Fader(options) {	
-		
+
+		// таймер для записи в файл
+		this.toConf 	= null;
+
+		// через сколько записуем
+		//this.confTime 	= 4000;
+		this.confTime 	= 500;
+
 		this.maxValue 	= options.max;					// установка макс. значения
 		this.minValue 	= options.min;					// установка минимального значения
 		this.element  	= $('#' + options.element);		// текущий элемент
 		this.calc		= options.calc;					// настройки спрайтов
 
+		this.remember   = options.remember === 0 ? 0 : 1;
+
 		this.shifts 	 = [this.calc.sprite.h, this.calc.sprite.w];		// Смещение спрайта
 		this.typeElement = this.element.data('type'); 						// тип кнопки
 
-		this.setDefault(options['default']);			// значение по умолчанию
-		this.setValue(this.getDefault());	
+		var
+			conf 			= targetsConf[options.element] || {},
+			defaultValue 	= conf['value'] || options['default'];
+
+
+		if ( options.activity === 0 ) {
+			this.activity = 0;	
+		} else {
+			this.activity = conf.activity == 0 ? 0 : 1;
+		}
+
+
+		// значение по умолчанию
+		this.setDefault(defaultValue);			
+		this.setValue(this.getDefault(), 1);	
 
 		return this.getHandler();
 	}
@@ -106,6 +175,7 @@
 				handler = this.types[this.typeElement];
 
 			if ( 'function' !== typeof handler ) {
+				air.trace(1);
 				return;
 			}
 
@@ -156,8 +226,40 @@
 		/**
 		* Установка значения
 		*/
-		setValue: function(val) {
+		setValue: function(val, act1) {
 			this.currValue = parseInt(val);
+
+			if ( 'object' == typeof this.realElement ) {
+				this.setRealVal();
+			}
+
+			if ( 'air' != area || 0 == this.remember) {
+				return;
+			}
+
+			var 
+				key = this.element.attr('id'),
+				act = act1 == 1 ? 1 : (this.isActive() ? 1 : 0);
+
+			clearTimeout(this.toConf);
+
+			if (typeof targetsConf[key] == 'undefined') {
+				targetsConf[key] = {
+					'value'    : this.currValue,
+					'activity' : act ? 1 : 0
+				};
+			}
+
+			this.toConf = setTimeout(function() {
+
+				targetsConf[key]['value'] 		= val;
+				targetsConf[key]['activity'] 	= targetsConf[key]['activity'] || act;
+
+				var config = temp.toStr(targetsConf);
+
+				temp.writeToFile(config);
+
+			}, this.confTime);			
 		},
 
 
@@ -275,10 +377,19 @@
 			
 		},
 
-	}
+		// получение св-ва Offset
+		getOffset: function(event, what) {
 
-}(window.jQuery);
+			what = what || 'all';
 
-function c(cc) {
-	console.log(cc);
-}
+			var offset = {
+				'x' : (typeof event.offsetX != 'undefined') ? event.offsetX : event.originalEvent.layerX,
+				'y' : (typeof event.offsetY != 'undefined') ? event.offsetY : event.originalEvent.layerY
+			}
+
+			return 'all' == what ? offset : offset[what];
+
+		},
+
+	};
+

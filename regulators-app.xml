@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<application xmlns="http://ns.adobe.com/air/application/2.7"> 
+    <id>examples.html.regulators</id> 
+    <versionNumber>0.1</versionNumber> 
+    <filename>regulators</filename> 
+    <initialWindow> 
+        <content>regulators.html</content> 
+        <visible>true</visible> 
+        <width>600</width> 
+        <height>600</height> 
+    </initialWindow> 
+</application>

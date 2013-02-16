@@ -3,13 +3,15 @@ function CheckBoxHandler(el, params) {
 	params.extend(this, params);
 
 	this.activePosition = {												// Стартовая позиция спрайта
-		'x' : 0,
+		'x' : this.getStartPosition() * this.shifts[0],
 		'y' : 0
 	}; 
 
+	this.attrId = this.element.attr('id');
+
 	this.optionsState = {
 		'mouseUp' : {
-			'active' : 5, 'notActive' : 1
+			'active' : 1, 'notActive' : 5
 		},
 		'hoverStart' : {
 			'active' : 5, 'notActive' : 1			
@@ -25,20 +27,39 @@ function CheckBoxHandler(el, params) {
 		}
 	};
 
+	if (this.getValue() >= 1) {
+		this.setPosition(5);
+	} else {
+		this.setPosition(0);
+	}
+
+
 	this.listen();
 
+	if ( 0 === this.activity ) {
+		this.lockButton();
+	}
+	
 };
 
 CheckBoxHandler.prototype = {
 
-	active: 0,
+	active: 1,
 
-	setState: function( params ) {
+	setState: function( params, setVal ) {
 
-		var key = this.isActive() ? 'active' : 'notActive';
-		
-		this.setValue( this.checkVal(this.isActive()) );
+		setVal = setVal || -1;
+
+		var 
+			key = this.getValue() == 1 ? 'active' : 'notActive',
+			val = this.getChVal();
+
 		this.setPosition( params[key] );
+
+		if (-1 == setVal) {
+			this.setValue( this.checkVal(val) );		
+		}
+	
 	},
 
 	listen: function() {
@@ -50,7 +71,8 @@ CheckBoxHandler.prototype = {
 
 		el.on('mousedown.checkbox', function() {
 			that.setPosition(2);
-			that.active = that.isActive() ? 0 : 1;
+
+			$.activity = 1;
 		});
 
 
@@ -58,17 +80,30 @@ CheckBoxHandler.prototype = {
 
 			if ( e.target.id == that.element.attr('id') ) {
 				that.setState( that.optionsState.mouseUp );
-			}
+			} 
 
+			$.activity = 0;
 		});
 
 
 		el.hover(function() {
-			that.setState( that.optionsState.hoverStart );
+			if (1 == $.activity) {
+				return false;
+			}
+
+			that.setState( that.optionsState.hoverStart, true );
 		}, function() {
-			that.setState( that.optionsState.hoverEnd );
+			if (1 == $.activity) {
+				return false;
+			}
+			
+			that.setState( that.optionsState.hoverEnd, true );
 		});
 
+	},
+
+	getChVal: function() {
+		return this.getValue() == 1 ? 0 : 1;
 	},
 
 	isActive: function() {
@@ -77,18 +112,35 @@ CheckBoxHandler.prototype = {
 
 	lockButton: function() {
 
-		this.setState( this.optionsState.lock );
+		this.active = 0;
+
+		this.setState( this.optionsState.lock, true );
+
+		if ( undefined !== targetsConf[this.attrId] ) {
+			targetsConf[this.attrId]['activity'] = 0;
+			this.setValue( this.getValue() );
+		}
 
 		this.element.unbind();
 		this.element.on('mousewheel.not_scroll', function(e, delta){
 			e.preventDefault();
 		});		
-		
+				
 	},
 
 	unlockButton: function() {
-		this.setState( this.optionsState.unlock );
+
+		this.active = 1;
+
+		this.setState( this.optionsState.unlock, true );
+
+		if ( undefined !== targetsConf[this.attrId] ) {
+			targetsConf[this.attrId]['activity'] = 1;
+			this.setValue( this.getValue() );
+		}
+
 		this.listen();
 		this.element.off('.not_scroll');
+
 	}
 }

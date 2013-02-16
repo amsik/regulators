@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.mousewheel.js"></script>
+		<script type="text/javascript" src="js/AIRAliases.js"></script>
+
+		<script type="text/javascript" src="js/handlers/button_handler.js"></script>
+		<script type="text/javascript" src="js/handlers/checkbox_handler.js"></script>
+		<script type="text/javascript" src="js/handlers/radio_handler.js"></script>
+		<script type="text/javascript" src="js/handlers/range_handler.js"></script>
+
+		<script type="text/javascript" src="js/fader.js"></script>
+		<script type="text/javascript" src="js/list_buttons.js"></script>
+
+
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+
+		<style>
+			hr { clear: both; margin-bottom: 20px; }
+			.radio {
+				float: left; 
+				margin-right: 10px;
+			}
+			.checkbox {
+				margin-bottom: 10px;
+			}
+			.button {
+				float: left;
+				margin-right: 20px;
+			}
+			.ton {
+				margin-top: 20px;
+			}
+		</style>
+
+		<title>Buttons</title>
+	</head>
+	<body>
+		<div id="content">
+
+			<div>
+				<div style="float: left; margin-bottom: 30px">
+					<div class="volume btns" id="volume" data-type="range"></div>
+					<div class="ton btns" id="ton" data-type="range"></div>
+				</div>
+
+				<div style="float: left; margin-bottom: 30px; margin-left: 20px;">	
+					<div class="speed btns" id="speed" data-type="range"></div>
+				</div>
+
+				<div style="float: left; margin-left: 200px;">
+					<select id="range_block">
+						<option value="range0">Range0</option>
+						<option value="range1">Range1</option>
+						<option value="range2">Range2</option>
+						<option value="range3">Range3</option>
+						<option value="range4">Range4</option>
+					</select>	
+
+					<button onclick="block('range', this)">Заблокировать</button>
+					<button onclick="getValue('range')">Значение</button>
+				</div>
+			</div>
+
+
+			<hr />
+
+
+			<div style="margin-bottom: 20px; clear: both; overflow: hidden;">
+				<div class="radio btns" id="radio0" data-type="radio"></div>
+				<div class="radio btns" id="radio1" data-type="radio"></div>
+				<div class="radio btns" id="radio2" data-type="radio"></div>
+
+				<div style="float: left; margin-left: 200px;">
+					<select id="radio_block">
+						<option value="radio0">Radio0</option>
+						<option value="radio1">Radio1</option>
+						<option value="radio2">Radio2</option>
+					</select>	
+
+					<button onclick="block('radio', this)">Заблокировать</button>
+					<button onclick="getValue('radio')">Значение</button>
+				</div>
+
+			</div>
+
+
+			<hr />
+
+
+			<div>
+				<div style="float: left; margin-right: 30px;">
+					<div class="checkbox btns" id="checkbox0" data-type="checkbox"></div>
+					<div class="checkbox btns" id="checkbox1" data-type="checkbox"></div>
+				</div>
+
+				<div style="float: left;  margin-right: 30px;">			
+					<div class="checkbox btns" id="checkbox2" data-type="checkbox"></div>
+					<div class="checkbox btns" id="checkbox3" data-type="checkbox"></div>
+				</div>
+
+				<div style="float: left; margin-bottom: 30px;">			
+					<div class="checkbox btns" id="checkbox4" data-type="checkbox"></div>
+					<div class="checkbox btns" id="checkbox5" data-type="checkbox"></div>
+				</div>
+
+
+				<div style="float: left; margin-left: 200px;">
+					<select id="checkbox_block">
+						<option value="checkbox0">checkbox0</option>
+						<option value="checkbox1">checkbox1</option>
+						<option value="checkbox2">checkbox2</option>
+						<option value="checkbox3">checkbox3</option>
+						<option value="checkbox4">checkbox4</option>
+						<option value="checkbox5">checkbox5</option>
+					</select>	
+
+					<button onclick="block('checkbox', this)">Заблокировать</button>
+					<button onclick="getValue('checkbox')">Значение</button>
+				</div>
+
+
+			</div>
+
+
+			<hr />
+
+
+			<div>
+				
+				<input type="button" class="button btns" id="button0" data-type="button" />
+				<input type="button" class="button btns" id="button1" data-type="button" />
+
+
+				<div style="float: left; margin-left: 200px;">
+					<select id="button_block">
+						<option value="button0">button0</option>
+						<option value="button1">button1</option>
+					</select>	
+
+					<button onclick="block('button', this)">Заблокировать</button>
+					<button onclick="getValue('button')">Значение</button>
+				</div>
+
+
+				<br><BR><BR><BR>
+			</div>
+
+		</div>
+
+		<script>
+
+/*
+		var e = new AIRFile();
+		conf = e.readFromFile();
+
+		air.trace(conf);
+*/
+			var cns = false;
+
+			function getActive(type) {
+				return $('#' + type + "_block").find('option:selected').val();
+			}
+
+			function getValue(type) {
+				var active = getActive(type);
+
+				if (cns)
+					_c( $.btns[active].getValue() );	
+				else
+					alert( $.btns[active].getValue() );
+			}
+
+
+			function block(type, btn) {
+				var 
+					active  = getActive(type),
+					t 		= btn.innerHTML == 'Заблокировать' ? 0 : 1,
+					obj 	= $.btns[active];
+
+				if (t) {
+					btn.innerHTML = 'Заблокировать';
+					obj.unlockButton();
+				} else {
+					btn.innerHTML = 'Разблокировать';
+					obj.lockButton();
+				}
+
+			}
+
+			function _c(cc){
+				console.log(cc);
+			}
+
+
+		</script>
+
+	</body>
+</html>

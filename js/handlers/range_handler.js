@@ -21,6 +21,14 @@ function RangeHandler(el, params) {
 
 	// ставим события на кнопку
 	this.listen();
+
+	if ( 0 === this.activity ) {
+		this.lockButton();
+	}
+
+	// создаем инпуты
+	this.createInput();
+
 };
 
 RangeHandler.prototype = {
@@ -76,7 +84,7 @@ RangeHandler.prototype = {
 
 		this.element.hover(function(){
 
-			if (1 == $.activity.range) {
+			if (1 == $.activity) {
 				return false;
 			}
 
@@ -91,7 +99,7 @@ RangeHandler.prototype = {
 			
 			startPos 		 = e.pageY;
 			that.started 	 = 1;
-			$.activity.range = 1;
+			$.activity 		 = 1;
 
 			that.dragStart(startPos);
 			that.setPosition(2);
@@ -112,12 +120,36 @@ RangeHandler.prototype = {
 
 			$(document).off('.drag_range');
 
-			that.started 		= 0;
-			$.activity.range 	= 0;
+			that.started 	= 0;
+			$.activity 		= 0;
 		});
 
 	},
 
+
+	createInput: function() {
+		var 
+			range = $('<input/>', {
+				'type' : 'range',
+				'max'  : this.getMax(),
+				'min'  : this.getMin(),
+				'name' : this.element.attr('id')
+			}).css({
+				'display' : 'none'
+			}).val( this.getValue() );
+
+		this.element.append( range );
+
+		this.realElement = range;
+
+	},
+
+	/**
+	* Установка значения, для реального HTML тега
+	*/
+	setRealVal: function() {
+		this.realElement.val( this.getValue() );
+	},
 
 	// Начало перемещения
 	dragStart: function(startPos) {
@@ -175,6 +207,13 @@ RangeHandler.prototype = {
 
 		this.activeButton = false;
 
+		var ea = this.element.attr('id');
+
+		if ( undefined !== targetsConf[ea] ) {
+			targetsConf[ea]['activity'] = 0;
+			this.setValue( this.getValue() );
+		}
+
 		// Ставим позицию на последнюю
 		pos = (calc.img.w / calc.sprite.w) - 1;
 		this.setPosition(pos, 'x');
@@ -190,6 +229,15 @@ RangeHandler.prototype = {
 
 	// разблокировать кнопку
 	unlockButton: function() {
+
+
+		var ea = this.element.attr('id');
+
+		if ( undefined !== targetsConf[ea] ) {
+			targetsConf[ea]['activity'] = 1;
+			this.setValue( this.getValue() );
+		}
+
 		this.setPosition(0);
 		this.listen();
 		this.activeButton = true;

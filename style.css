@@ -6,48 +6,55 @@ body {
 	cursor: pointer;
 }
 
-.mikrik {
-	background-image: url('images/mikrik.jpg');
-	background-repeat:  no-repeat;
-	height: 46px;
-	width: 46px;	
+.button {
+	background-image: url('images/button.jpg');
+	background-repeat: no-repeat;
+	height: 40px;
+	width: 42px;	
 	background-position: 0 0;
+	border: 0px;
 }
-.mikrik:hover {
-	background-position: -46px 0;	
-}
-
 
 .range {
 	background-image: url('images/range.jpg');
-	background-repeat:  no-repeat;
+	background-repeat: no-repeat;
 	height: 48px;
 	width: 44px;	
 	background-position: 0 -432px;
 }
 
-.range-hover {
-	background-position: -42px -432px;	
-}
-
-.range-active {
-	background-position: -84px -432px;	
-}
-
 .radio {
 	background-image: url('images/radio.jpg');
-	background-repeat:  no-repeat;
+	background-repeat: no-repeat;
 	height: 44px;
 	width: 120px;	
-}
-
-.radio:hover {
-	background-position: -82px 0;	
+	position: relative;
 }
 
 .checkbox {
 	background-image: url('images/checkbox.gif');
-	background-repeat:  no-repeat;
+	background-repeat: no-repeat;
 	height: 44px;
 	width: 44px;		
+}
+
+.volume {
+	background-image: url('images/volume.jpg');
+	background-repeat: no-repeat;
+	height: 48px;
+	width: 90px;	
+}
+
+.ton {
+	background-image: url('images/ton.jpg');
+	background-repeat: no-repeat;
+	height: 48px;
+	width: 90px;	
+}
+
+.speed {
+	background-image: url('images/speed.jpg');
+	background-repeat: no-repeat;
+	height: 48px;
+	width: 90px;	
 }

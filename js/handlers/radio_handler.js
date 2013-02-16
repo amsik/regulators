@@ -22,6 +22,14 @@ function RadioHandler(el, params) {
 	};
 
 	this.listen();
+
+
+	if ( 0 === this.activity ) {
+		this.lockButton();
+	}
+
+
+
 };
 
 RadioHandler.prototype = {
@@ -41,8 +49,14 @@ RadioHandler.prototype = {
 
 
 		this.element.hover(function() {
+
+			if (1 == $.activity) {
+				return false;
+			}
+
 			that.setPosition(1);
 			that.hovered = true;
+
 		}, function() {
 			that.setPosition(0);
 			that.hovered = false;
@@ -50,14 +64,17 @@ RadioHandler.prototype = {
 
 
 		this.element.on('mousedown.radio', function(e) {
-			startPos = mouseDown = e.pageX;
+			startPos  = e.pageX;
+			mouseDown = that.getOffset(e, 'x');
 
 			that.dragStart(startPos, e);
 			that.setPosition(2);
+
+			$.activity = 1;
 		});
 
 
-		$(document).on('mouseup.radio', function(e) {
+		$(document).on('mouseup.' + this.element.attr('id'), function(e) {
 
 			e.target.getAttribute('id') == that.element.attr('id') 
 				? that.setPosition(1)
@@ -65,10 +82,11 @@ RadioHandler.prototype = {
 		
 			$(document).off('.drag_radio');
 
-			if (mouseDown == e.pageX) {
+			if (mouseDown == that.getOffset(e, 'x')) {
 				that.onClick(e);
 			}
 
+			$.activity = 0;
 		});
 
 
@@ -103,30 +121,28 @@ RadioHandler.prototype = {
 		var 
 			that 	= this,
 			sh 		= this.calc.sprite.w / this.getTotalVals('h'),
-			party, accPos;
+			party, accPos = startPos;
 
 		$(document).on("mousemove.drag_radio", function(e){
 
 			this.dragged = 1;
 
 			party  = ( e.pageX >= startPos ) ? 1 : -1;
-			accPos = (party == 1)
-					? (that.getStartPosition() + 2) * sh
-					: that.getStartPosition() * sh;
 
 			if (that.checkBorder(party)) {
 				return;
 			}
 
 			// листаем вправо
-			if ( party == 1 && ((e.pageX >= accPos) && e.pageX <= (accPos + sh)) )	{ 
+			if ( party == 1 && ((e.pageX >= accPos) && e.pageX >= (accPos + sh)) )	{ 
 				that.setVal(party);	
+				accPos = e.pageX;
 			}
 
-
 			// листаем влево
-			if (party == -1 && ((e.pageX <= accPos) && e.pageX >= (accPos - sh)) ) {
-				that.setVal(party);	
+			if (party == -1 && ((e.pageX <= accPos) && e.pageX <= (accPos - sh)) ) {
+				that.setVal(party);		
+				accPos = e.pageX;
 			}
 
 		});
@@ -139,7 +155,7 @@ RadioHandler.prototype = {
 			e 		= e || window.event;
 			that	= this,
 			part 	= that.shifts[1] / that.getTotalVals(),
-			val  	= Math.ceil(e.clientX / part) - 1,
+			val  	= Math.ceil(that.getOffset(e, 'x') / part) - 1,
 			pos  	= [ Math.min(val, that.getStartPosition()),  Math.max(val, that.getStartPosition()) ],
 			party 	= that.getStartPosition() > val ? -1 : 1;
 
@@ -196,8 +212,8 @@ RadioHandler.prototype = {
 
 		var g = (derection > 0) 
 					? this.getValue() == this.getMax()
-					: this.getValue() == this.getMin();
-
+					: this.getValue() == this.getMin()
+					
 		return g;
 	},
 
@@ -207,9 +223,18 @@ RadioHandler.prototype = {
 
 	lockButton: function() {
 
+		this.active = false;
+
+		var ea = this.element.attr('id');
+
+		if ( undefined !== targetsConf[ea] ) {
+			targetsConf[ea]['activity'] = 0;
+			this.setValue( this.getValue() );
+		}
+
 		this.element.unbind();
 		this.element.off('.radio').off('.drag_radio');
-		$(document).off('.radio');
+		$(document).off("." + this.element.attr('id'));
 
 		this.element.on('mousewheel.not_scroll', function(e, delta){
 			e.preventDefault();
@@ -219,9 +244,18 @@ RadioHandler.prototype = {
 	},
 
 	unlockButton: function() {
+
+		this.active = true;
+		
+		var ea = this.element.attr('id');
+
+		if ( undefined !== targetsConf[ea] ) {
+			targetsConf[ea]['activity'] = 1;
+			this.setValue( this.getValue() );
+		}
+
 		this.setPosition(0);
 		this.listen();
-		this.active = true;
 
 		this.element.off('.not_scroll');		
 	}
