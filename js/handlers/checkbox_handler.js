@@ -39,7 +39,9 @@ function CheckBoxHandler(el, params) {
 	if ( 0 === this.activity ) {
 		this.lockButton();
 	}
-	
+
+	// создаем инпуты
+	this.createInput();	
 };
 
 CheckBoxHandler.prototype = {
@@ -109,6 +111,35 @@ CheckBoxHandler.prototype = {
 			that.setState( that.optionsState.hoverEnd, true );
 		});
 
+	},
+
+	createInput: function() {
+
+		var that = this;
+		var name = this.element.attr('id');
+			
+		var	checkbox = $('<input/>', {
+			'name'  : name,
+			'type'  : 'checkbox',
+			'id'	: name + "_el"
+		});
+
+		if ( 1 == this.getValue() )	{
+			checkbox.click();
+		}
+
+		checkbox
+			.change(function() {
+				that.setValue($(this).is(':checked') == true ? 1 : 0, 0, true);
+			})
+			.addClass('cloth');
+
+		this.element.append( checkbox );	
+		this.realElement = checkbox;
+	},
+
+	setRealVal: function() {
+		this.realElement.click();
 	},
 
 	getChVal: function() {

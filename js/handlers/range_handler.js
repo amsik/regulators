@@ -129,16 +129,23 @@ RangeHandler.prototype = {
 
 	createInput: function() {
 		var 
+			that  = this,
 			range = $('<input/>', {
 				'type' : 'range',
 				'max'  : this.getMax(),
 				'min'  : this.getMin(),
 				'name' : this.element.attr('id')
-			}).css({
-				'display' : 'none'
-			}).val( this.getValue() );
+			})
+			.val(this.getValue())
+			.addClass('cloth');
 
 		this.element.append( range );
+
+		range.change(function() {
+			that.setVal( 
+				that.getValue() > $(this).val() ? -1 : 1 
+			);
+		});
 
 		this.realElement = range;
 

@@ -18,9 +18,16 @@
 $(document).on('ready', function(){
 
 	if ( !selectStart ) {
-		document.onselectstart = function() {
-			return false;
+		if ( typeof document.onselectstart != 'undefined' ) {
+			document.onselectstart = function() {
+				return false;
+			}
 		}
+		
+		if ( typeof document.getElementsByTagName('body')[0].style.MozUserSelect != 'undefined' ) {
+			document.getElementsByTagName('body')[0].style.MozUserSelect = 'none';
+		}		
+		
 	}
 
 	document.ondragstart = function() {
@@ -86,8 +93,8 @@ $(document).on('ready', function(){
 		}),
 		'radio2' : new Fader({
 			'element' 	: 'radio2',
-			'max' 		: 3,
-			'min' 		: 1,
+			'max' 		: -5,
+			'min' 		: -7,
 			'default' 	: 2,
 			'calc'		: {
 				'sprite' 	: { 'h' : 50,  'w' : 123 }, 

@@ -6,6 +6,10 @@ body {
 	cursor: pointer;
 }
 
+.cloth {
+	display: none;
+}
+
 .button {
 	background-image: url('images/button.jpg');
 	background-repeat: no-repeat;

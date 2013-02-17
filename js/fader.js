@@ -7,7 +7,7 @@
 	*	Объекты для записи в файл
 	*/ 
 	var 
-		area 		= 'air',
+		area 		= 'web',
 		targetsConf = {},
 		temp 		= null,
 		selectStart = false;		// Отмена выделения документа
@@ -225,11 +225,16 @@
 
 		/**
 		* Установка значения
+		* @param val  - значение
+		* @param act1 - активность по умолчанию
+		* @param keyReal - запускать ф-ю установки знач. для станд. инпута
 		*/
-		setValue: function(val, act1) {
+		setValue: function(val, act1, keyReal) {
 			this.currValue = parseInt(val);
 
-			if ( 'object' == typeof this.realElement ) {
+			keyReal = keyReal || false;
+
+			if ( 'object' == typeof this.realElement && !keyReal ) {
 				this.setRealVal();
 			}
 
@@ -351,12 +356,17 @@
 
 
 		// получание стартовой позиции
-		getStartPosition: function() {
-			var startPosition = 0;
+		getStartPosition: function(type) {
+
+			type = type || 'all';
+
+			var 
+				startPosition 	= 0,
+				value 			= type == 'all' ? this.getValue() : this.getMax();
 
 			for( 
 				var i =  this.getMin(); 
-					i <  this.getValue(); 
+					i <  value; 
 					i += 1, startPosition += 1 
 			);
 
@@ -393,3 +403,8 @@
 
 	};
 
+
+
+function _c(log) {
+	console.log(log);
+}

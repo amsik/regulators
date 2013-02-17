@@ -28,7 +28,8 @@ function RadioHandler(el, params) {
 		this.lockButton();
 	}
 
-
+	// создаем инпуты
+	this.createInput();	
 
 };
 
@@ -115,6 +116,59 @@ RadioHandler.prototype = {
 
 		});
 	},
+
+	createInput: function() {
+
+		var 
+			that = this,
+			name = this.element.attr('id'), 
+			rndVal, radio, label;
+
+		for( var i = this.getMin(); i <= this.getMax(); i++ ) {
+
+			rndVal = name + "_" + Math.round( Math.random() * 100000);
+
+			label = $('<label for="'+ rndVal +'">'+ i +'</label>')
+						.css('color', '#fff')
+						.addClass('cloth');
+
+			radio = $('<input/>', {
+				type: 'radio',
+				name: name,
+				value: i,
+				id: rndVal
+			})
+			.appendTo(label);
+
+			if ( this.getValue() == i ) {
+				radio.attr('checked', 'checked');
+			}			
+
+			this.element.append(label);
+
+		}
+
+		radio = $('input[name=' + name + ']');
+
+		radio.change(function() {
+			that.setValue($(this).val(), 0, true);
+		});
+
+		this.realElement = radio;
+
+	},
+
+	setRealVal: function() {
+
+		var val = this.getValue();
+
+		this.realElement.removeAttr('checked').each(function() {
+			if ( val == $(this).val() ) {
+				$(this).attr('checked', 'checked').click();
+			}
+		});
+	},
+
 
 	dragStart: function(startPos) {
 
