@@ -128,7 +128,11 @@
 
 		this.maxValue 	= options.max;					// установка макс. значения
 		this.minValue 	= options.min;					// установка минимального значения
-		this.element  	= $('#' + options.element);		// текущий элемент
+
+		this.element  	= ('object' == typeof options.element) 
+							? options.element
+							: $('#' + options.element);		
+
 		this.calc		= options.calc;					// настройки спрайтов
 
 		this.remember   = options.remember === 0 ? 0 : 1;
@@ -402,6 +406,97 @@
 		},
 
 	};
+
+
+(function($) {
+	
+	// настройки кнопок
+	$.faderSettings = {};
+
+	var exitsingEvents = "blur focus focusin focusout load resize scroll unload click dblclick " +
+						"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+						"change select submit keydown keypress keyup error contextmenu";
+
+	var ev = exitsingEvents.split(" ");
+
+
+	$.fn.KFaders = function(params) {
+
+		params['element'] = this;
+
+		var key = this.attr('id');
+
+		$.faderSettings[key] = {};
+		$.faderSettings[key]['params'] = params;
+		$.faderSettings[key]['dispatch'] = {};
+
+		var callback, assigment;
+
+		function bindEvent(eventName, fn) {
+			this.bind(eventName + ".dispatch", fn);
+		}
+
+		for( var i in params['dispatch'] ) {
+			callback = params['dispatch'][i]['callback'] || function() {};
+
+			$.faderSettings[key]['dispatch'][i] = callback;
+
+
+			if ('boolean' == typeof params['dispatch'][i]['assigment']) {
+
+				if (params['dispatch'][i]['assigment'] === true && 0 <= ev.indexOf(i)) {
+					bindEvent.call(this, i, callback);
+				}
+			} else {
+				bindEvent.call(this, i, callback);
+			}
+				
+
+		}
+
+		return this.each(function() {
+			$.faderSettings[key]['handler'] = new Fader(params);
+		});
+
+	};
+
+
+	$.fn.KDispatch = function(event) {
+
+		var 
+			key 			= this.attr('id'),
+			currentObj		= $.faderSettings[key];
+
+
+		// стандартные методы кнопки
+		var 
+			sEvents  = ['lock', 'isActive', 'unlock'],	
+			sMethods = {
+				'lock' 		: 'lockButton',
+				'isActive' 	: 'isActive',
+				'unlock' 	: 'unlockButton'
+			} 
+
+		// запускаем стандартные методы
+		if ( -1 != sEvents.indexOf(event) ) {
+			var actEvent = currentObj.handler[sMethods[event]];			
+			return actEvent.call(currentObj.handler);
+		}
+
+		
+		if ( 0 >= ev.indexOf(event) ) {	// вызываем добавленный обработчик
+			this.bind(event, currentObj['dispatch'][event]);
+			_c(event)
+		} else {						// созданное событие
+			return currentObj['dispatch'][event].apply(
+				currentObj.handler
+			);
+		}
+
+	}
+
+
+})(jQuery);
 
 
 

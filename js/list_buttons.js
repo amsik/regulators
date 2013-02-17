@@ -13,6 +13,16 @@
 *
 *	remember	- Зпоминать в файл или нет
 *	activity	- Активность кнопки ( 0 - не ктивна)
+*
+*
+*
+*	Стандартные методы для диспатча
+*   	0. $(element).KDispatch('lock')		-- заблокировать кнопку
+*		1. $(element).KDispatch('unlock')	-- разблокировать кнопку
+*		2. $(element).KDispatch('isActive') -- проверка на активность кнопки
+*
+*	callback  - функция события
+*	assigment - установка существующих событий сразу	(Default - true) 
 */
 
 $(document).on('ready', function(){
@@ -30,44 +40,86 @@ $(document).on('ready', function(){
 		
 	}
 
+
+	$(document).keyup(function(e) {
+		//_c(e.keyCode)
+
+		switch( e.keyCode ) {
+			case 49:
+				$('#volume').KDispatch('unlock');
+				break;
+
+			case 50:
+				$('#volume').KDispatch('lock');
+				break;	
+
+			case 51:
+				$('#volume').KDispatch('isActive');
+				break;		
+
+		}
+
+	});
+
 	document.ondragstart = function() {
 		return false;
 	};
 
 
+	$('#volume').KFaders({
+		'max' 		: 25,
+		'min' 		: 0,
+		'default' 	: 5,
+		'calc'		: {
+			'sprite' 	: { 'h' : 50,  'w' : 90	}, 
+			'img' 		: { 'h' : 1300, 'w' : 360 }
+		},
+		'dispatch': {
+			'click' : {
+				'callback': function() {
+					_c('click111')
+				},
+				'assigment': false
+			},
+			'dblclick' : {
+				'callback' : function() {
+					_c('DBL!11')
+				}
+			}
+
+		}
+
+	});
+/*
+	$('#ton').KFaders({
+		'max' 		: 25,
+		'min' 		: 0,
+		'default' 	: 10,
+		'calc'		: {
+			'sprite' 	: { 'h' : 50,  'w' : 90	}, 
+			'img' 		: { 'h' : 1250, 'w' : 360 }
+		}
+	});
+
+	$('#speed').KFaders({
+		'max' 		: 12,
+		'min' 		: 0,
+		'default' 	: 3,
+		'calc'		: {
+			'sprite' 	: { 'h' : 50,  'w' : 90	}, 
+			'img' 		: { 'h' : 650, 'w' : 360 }
+		}
+	});
+*/
+
+
+
+_c($.faderSettings)
+
+
+
+
 	$.btns = {
-
-		'volume' :  new Fader({
-			'element' 	: 'volume',
-			'max' 		: 25,
-			'min' 		: 0,
-			'default' 	: 5,
-			'calc'		: {
-				'sprite' 	: { 'h' : 50,  'w' : 90	}, 
-				'img' 		: { 'h' : 1300, 'w' : 360 }
-			}
-		}),
-		'ton' :  new Fader({
-			'element' 	: 'ton',
-			'max' 		: 25,
-			'min' 		: 0,
-			'default' 	: 10,
-			'calc'		: {
-				'sprite' 	: { 'h' : 50,  'w' : 90	}, 
-				'img' 		: { 'h' : 1250, 'w' : 360 }
-			}
-		}),
-		'speed' :  new Fader({
-			'element' 	: 'speed',
-			'max' 		: 12,
-			'min' 		: 0,
-			'default' 	: 3,
-			'calc'		: {
-				'sprite' 	: { 'h' : 50,  'w' : 90	}, 
-				'img' 		: { 'h' : 650, 'w' : 360 }
-			}
-		}),
-
 
 
 
