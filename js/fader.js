@@ -126,6 +126,8 @@
 		//this.confTime 	= 4000;
 		this.confTime 	= 1000;
 
+		this.change = options['change'] || function() {};
+
 		this.maxValue 	= options.max;					// установка макс. значения
 		this.minValue 	= options.min;					// установка минимального значения
 
@@ -235,6 +237,8 @@
 		*/
 		setValue: function(val, act1, keyReal) {
 			this.currValue = parseInt(val);
+
+			this.change.apply(this);
 
 			keyReal = keyReal || false;
 
@@ -430,27 +434,28 @@
 		$.faderSettings[key]['params'] = params;
 		$.faderSettings[key]['dispatch'] = {};
 
-		var callback, assigment;
+		var callback, assigment, actParam;
 
-		function bindEvent(eventName, fn) {
-			this.bind(eventName + ".dispatch", fn);
-		}
+		for ( var i in params['dispatch'] ) {
 
-		for( var i in params['dispatch'] ) {
-			callback = params['dispatch'][i]['callback'] || function() {};
+			actParam = params['dispatch'][i];
+			callback = actParam['callback'] || function() {};
 
 			$.faderSettings[key]['dispatch'][i] = callback;
 
 
-			if ('boolean' == typeof params['dispatch'][i]['assigment']) {
+			assigment = ('undefined' == typeof actParam['assigment'] || actParam['assigment'] == true) ? true : false;
 
-				if (params['dispatch'][i]['assigment'] === true && 0 <= ev.indexOf(i)) {
-					bindEvent.call(this, i, callback);
-				}
-			} else {
+			
+			if (assigment && 0 <= ev.indexOf(i)) {
 				bindEvent.call(this, i, callback);
 			}
-				
+
+
+			function bindEvent(eventName, fn) {
+				this.bind(eventName + ".dispatch", fn);
+			};
+
 
 		}
 
@@ -483,15 +488,19 @@
 			return actEvent.call(currentObj.handler);
 		}
 
-		
-		if ( 0 >= ev.indexOf(event) ) {	// вызываем добавленный обработчик
+		// вызываем добавленный обработчик
+		if ( 0 <= ev.indexOf(event) ) {
 			this.bind(event, currentObj['dispatch'][event]);
-			_c(event)
-		} else {						// созданное событие
+			return this;
+			
+		// созданное событие	
+		} else if (currentObj['dispatch'][event]) {						
 			return currentObj['dispatch'][event].apply(
 				currentObj.handler
 			);
 		}
+
+		return this;
 
 	}
 

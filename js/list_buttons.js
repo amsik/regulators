@@ -54,8 +54,17 @@ $(document).on('ready', function(){
 				break;	
 
 			case 51:
-				$('#volume').KDispatch('isActive');
+				_c($('#volume').KDispatch('isActive'));
 				break;		
+
+			case 52:
+				$('#volume').KDispatch('kaban');
+				break;
+
+			case 53:
+				$('#volume').KDispatch('fazan');
+				break;
+
 
 		}
 
@@ -78,19 +87,32 @@ $(document).on('ready', function(){
 			'click' : {
 				'callback': function() {
 					_c('click111')
-				},
-				'assigment': false
+				}
 			},
 			'dblclick' : {
 				'callback' : function() {
 					_c('DBL!11')
+				},
+				'assigment': false
+			},
+			'fazan': {
+				'callback' : function() {
+					_c(this);
 				}
-			}
+			},
+			'kaban': {
+				'callback' : function() {
+					_c('Собственное событие KABAN')
+				} 	
+			} 
 
+		},
+		'change' : function() {
+			_c("Стандартная: " + this.getValue());
 		}
 
 	});
-/*
+
 	$('#ton').KFaders({
 		'max' 		: 25,
 		'min' 		: 0,
@@ -110,11 +132,11 @@ $(document).on('ready', function(){
 			'img' 		: { 'h' : 650, 'w' : 360 }
 		}
 	});
-*/
 
 
 
-_c($.faderSettings)
+
+	//_c($.faderSettings)
 
 
 
