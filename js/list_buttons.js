@@ -23,6 +23,8 @@
 *
 *	callback  - функция события
 *	assigment - установка существующих событий сразу	(Default - true) 
+*
+*	change - ф-я, которая срабатывает при изменении значения.
 */
 
 $(document).on('ready', function(){
@@ -107,7 +109,7 @@ $(document).on('ready', function(){
 			} 
 
 		},
-		'change' : function() {
+		'callback' : function() {
 			_c("Стандартная: " + this.getValue());
 		}
 
@@ -134,27 +136,36 @@ $(document).on('ready', function(){
 	});
 
 
+	$('#radio0').KFaders({
+		'max' 		: 5,
+		'min' 		: 3,
+		'default' 	: 5,
+		'calc'		: {
+			'sprite' 	: { 'h' : 50,  'w' : 123 }, 
+			'img' 		: { 'h' : 150, 'w' : 615 }
+		},
+		'change' : function() {
+			console.log('Радио: ' + this.getValue())
+		}		 
+	});
 
-
-	//_c($.faderSettings)
-
+	$('#checkbox0').KFaders({
+		'max' 		: 1,
+		'min' 		: 0,
+		'default' 	: 0,
+		'calc'		: {
+			'sprite' 	: { 'h' : 50,  'w' : 45 }, 
+			'img' 		: { 'h' : 42, 'w' : 315 }
+		},
+		'change' : function() {
+			console.log('Чекбокс: ' +  this.getValue() )
+		}				
+	});
 
 
 
 	$.btns = {
 
-
-
-		'radio0' : new Fader({
-			'element' 	: 'radio0',
-			'max' 		: 5,
-			'min' 		: 3,
-			'default' 	: 5,
-			'calc'		: {
-				'sprite' 	: { 'h' : 50,  'w' : 123 }, 
-				'img' 		: { 'h' : 150, 'w' : 615 }
-			}		
-		}),
 		'radio1' : new Fader({
 			'element' 	: 'radio1',
 			'max' 		: 3,
@@ -179,16 +190,6 @@ $(document).on('ready', function(){
 
 
 
-		'checkbox0' : new Fader({
-			'element' 	: 'checkbox0',
-			'max' 		: 1,
-			'min' 		: 0,
-			'default' 	: 0,
-			'calc'		: {
-				'sprite' 	: { 'h' : 50,  'w' : 45 }, 
-				'img' 		: { 'h' : 42, 'w' : 315 }
-			}				
-		}),
 		'checkbox1' : new Fader({
 			'element' 	: 'checkbox1',
 			'max' 		: 1,

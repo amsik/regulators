@@ -21,8 +21,9 @@ function RadioHandler(el, params) {
 		'nextSlide' : 10
 	};
 
-	this.listen();
-
+	if ('none' != this.element.css('backgroundImage')) {
+		this.listen();
+	}
 
 	if ( 0 === this.activity ) {
 		this.lockButton();
@@ -30,7 +31,6 @@ function RadioHandler(el, params) {
 
 	// создаем инпуты
 	this.createInput();	
-
 };
 
 RadioHandler.prototype = {
@@ -124,7 +124,7 @@ RadioHandler.prototype = {
 			name = this.element.attr('id'), 
 			rndVal, radio, label;
 
-		for( var i = this.getMin(); i <= this.getMax(); i++ ) {
+		for ( var i = this.getMin(); i <= this.getMax(); i++ ) {
 
 			rndVal = name + "_" + Math.round( Math.random() * 100000);
 
@@ -148,27 +148,11 @@ RadioHandler.prototype = {
 
 		}
 
-		radio = $('input[name=' + name + ']');
-
-		radio.change(function() {
-			that.setValue($(this).val(), 0, true);
-		});
-
 		this.realElement = radio;
 
 	},
 
-	setRealVal: function() {
-
-		var val = this.getValue();
-
-		this.realElement.removeAttr('checked').each(function() {
-			if ( val == $(this).val() ) {
-				$(this).attr('checked', 'checked').click();
-			}
-		});
-	},
-
+	setRealVal: function() {},
 
 	dragStart: function(startPos) {
 

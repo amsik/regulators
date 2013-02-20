@@ -392,7 +392,7 @@
 			} else {
 				return Math.ceil(this.calc.img.w / this.shifts[1]);	
 			}
-			
+
 		},
 
 		// получение св-ва Offset
@@ -413,7 +413,7 @@
 
 
 (function($) {
-	
+
 	// настройки кнопок
 	$.faderSettings = {};
 
@@ -431,10 +431,14 @@
 		var key = this.attr('id');
 
 		$.faderSettings[key] = {};
-		$.faderSettings[key]['params'] = params;
+		$.faderSettings[key]['params'] 	 = params;
 		$.faderSettings[key]['dispatch'] = {};
 
 		var callback, assigment, actParam;
+
+		function bindEvent(eventName, fn) {
+			this.bind(eventName + ".dispatch", fn);
+		};
 
 		for ( var i in params['dispatch'] ) {
 
@@ -443,24 +447,24 @@
 
 			$.faderSettings[key]['dispatch'][i] = callback;
 
-
 			assigment = ('undefined' == typeof actParam['assigment'] || actParam['assigment'] == true) ? true : false;
 
-			
 			if (assigment && 0 <= ev.indexOf(i)) {
 				bindEvent.call(this, i, callback);
 			}
-
-
-			function bindEvent(eventName, fn) {
-				this.bind(eventName + ".dispatch", fn);
-			};
-
 
 		}
 
 		return this.each(function() {
 			$.faderSettings[key]['handler'] = new Fader(params);
+
+			if ( $(this).data('type') == 'radio' ) {
+				var h = $.faderSettings[key]['handler'];
+
+				$(this).find(':radio').on('change.change_radio', function() {
+					h.setValue( $(this).val(), 0, true );
+				});
+			}
 		});
 
 	};
