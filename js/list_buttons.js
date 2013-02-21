@@ -141,6 +141,25 @@ $(document).on('ready', function(){
 		}				
 	});
 
+	$('#button0').bind('opana', function() {
+		_c('BUTTON opana');
+	});
+
+	$('#button0').KFaders({
+		'max' 		: 1,
+		'min' 		: 0,
+		'default' 	: 0,
+		'calc'		: {
+			'sprite' 	: { 'h' : 40,  'w' : 45 }, 
+			'img' 		: { 'h' : 42, 'w' : 180 }
+		},
+		'event' : 'opana',
+		'callback' : function() {
+			console.log(this)
+		}				
+	});
+
+
 
 
 	$.btns = {
@@ -222,17 +241,6 @@ $(document).on('ready', function(){
 
 
 
-
-		'button0' : new Fader({
-			'element' 	: 'button0',
-			'max' 		: 1,
-			'min' 		: 0,
-			'default' 	: 0,
-			'calc'		: {
-				'sprite' 	: { 'h' : 40,  'w' : 45 }, 
-				'img' 		: { 'h' : 42, 'w' : 180 }
-			}					
-		}),
 		'button1' : new Fader({
 			'element' 	: 'button1',
 			'max' 		: 1,

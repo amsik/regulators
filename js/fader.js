@@ -161,18 +161,11 @@
 		}
 
 
-		options['callback'] = options['callback'] || function() {};
+		this['callback'] = options['callback'] || function() {};
+		this['event'] 	 = options['event'];
 
-		if ( options['event'] && typeof options['callback'] == 'function' ) {
-			var t = this;
 
-			this.change = function() {
-				t.element.trigger(options['event']);
-
-				options['callback'].apply(t);
-			};
-		}
-
+		this.setDispatch();
 
 		// значение по умолчанию
 		this.setDefault(defaultValue);			
@@ -206,6 +199,20 @@
 			}
 
 			return new handler(this.element, this);
+		},
+
+
+		setDispatch: function() {
+			if ( this['event'] && typeof this['callback'] == 'function' ) {
+				var t = this;
+
+				this.change = function() {
+					t.element.trigger(t['event']);
+
+					t['callback'].apply(t);
+				};
+			}
+
 		},
 
 

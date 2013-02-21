@@ -41,6 +41,8 @@ ButtonHandler.prototype = {
 
 			if ( e.target.getAttribute('id') == el.attr('id') ) {
 				that.setPosition(1);
+				that.element.trigger(that['event']);
+				that['callback'].apply(that);
 				return;
 			}
 
