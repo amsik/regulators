@@ -12,6 +12,13 @@
 		temp 		= null,
 		selectStart = false;		// Отмена выделения документа
 
+
+	var exitsingEvents = "blur focus focusin focusout load resize scroll unload click dblclick " +
+						"mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+						"change select submit keydown keypress keyup error contextmenu";
+
+	var ev = exitsingEvents.split(" ");
+
 	/**
 	* Активность кнопок 
 	* Для того, чтобы работала только 1 кнопка 
@@ -151,6 +158,19 @@
 			this.activity = 0;	
 		} else {
 			this.activity = conf.activity == 0 ? 0 : 1;
+		}
+
+
+		options['callback'] = options['callback'] || function() {};
+
+		if ( options['event'] && typeof options['callback'] == 'function' ) {
+			var t = this;
+
+			this.change = function() {
+				t.element.trigger(options['event']);
+
+				options['callback'].apply(t);
+			};
 		}
 
 

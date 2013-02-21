@@ -48,7 +48,7 @@ $(document).on('ready', function(){
 
 		switch( e.keyCode ) {
 			case 49:
-				$('#volume').KDispatch('unlock');
+				$('#volume').trigger('fazan');
 				break;
 
 			case 50:
@@ -76,6 +76,9 @@ $(document).on('ready', function(){
 		return false;
 	};
 
+	$('#volume').bind('opana', function() {
+		_c('dispatch opana');
+	});
 
 	$('#volume').KFaders({
 		'max' 		: 25,
@@ -85,34 +88,10 @@ $(document).on('ready', function(){
 			'sprite' 	: { 'h' : 50,  'w' : 90	}, 
 			'img' 		: { 'h' : 1300, 'w' : 360 }
 		},
-		'dispatch': {
-			'click' : {
-				'callback': function() {
-					_c('click111')
-				}
-			},
-			'dblclick' : {
-				'callback' : function() {
-					_c('DBL!11')
-				},
-				'assigment': false
-			},
-			'fazan': {
-				'callback' : function() {
-					_c(this);
-				}
-			},
-			'kaban': {
-				'callback' : function() {
-					_c('Собственное событие KABAN')
-				} 	
-			} 
-
-		},
+		'event' : 'opana',
 		'callback' : function() {
-			_c("Стандартная: " + this.getValue());
+			console.log(this)
 		}
-
 	});
 
 	$('#ton').KFaders({
